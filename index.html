@@ -38,7 +38,7 @@
     </style>
   </head>
   <body>
-    <h2>React Native WebView Bridge Test #002</h2>
+    <h2>React Native WebView Bridge Test #003</h2>
     <div class="card">
       <h3>1. Web -> Native 요청</h3>
       <button onclick="requestLogin()">로그인 요청 전송</button>
@@ -72,6 +72,7 @@
       // [받기] Native -> Web: Request 또는 Response 수신
       window.addEventListener("nativeMessage", function (e) {
         const data = e.detail;
+        console.log("로그인 결과 수신:", data);
         log(data);
 
         if (data.cmd === "request") {
