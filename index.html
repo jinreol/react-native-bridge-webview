@@ -38,7 +38,7 @@
     </style>
   </head>
   <body>
-    <h2>React Native WebView Bridge Test #003</h2>
+    <h2>React Native WebView Bridge Test #004</h2>
     <div class="card">
       <h3>1. Web -> Native 요청</h3>
       <button onclick="requestLogin()">로그인 요청 전송</button>
@@ -79,7 +79,7 @@
           if (data.class === "Popup") {
             if (data.method === "Confirm") {
               const isOk = confirm(
-                `${data.parameter.title}\n\n${data.parameter.message}`,
+                data.parameter.message,
               );
 
               // 응답(Response) 전송
@@ -88,7 +88,7 @@
                 id: data.id,
                 class: "Popup",
                 type: "Confirm",
-                result: userConfirmed ? "Success" : "Fail",
+                result: isOk ? "Success" : "Fail",
               };
               window.ReactNativeWebView.postMessage(JSON.stringify(response));
             }
@@ -98,7 +98,7 @@
             if (data.method === "Login") {
               // Native -> Web 응답 처리 (예: 로그인 결과 보여주기)
               console.log("로그인 결과 수신:", data.parameter);
-              alert(`${data.parameter.userName}님 환영합니다.`);
+              alert(data.parameter.userName + "님 환영합니다.");
             }
           }
         }
