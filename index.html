@@ -38,7 +38,7 @@
     </style>
   </head>
   <body>
-    <h2>React Native WebView Bridge Test #001</h2>
+    <h2>React Native WebView Bridge Test #002</h2>
     <div class="card">
       <h3>1. Web -> Native 요청</h3>
       <button onclick="requestLogin()">로그인 요청 전송</button>
@@ -51,7 +51,7 @@
     <script>
       // 로그 출력 함수
       function log(data) {
-        document.getElementById("id").innerText = JSON.stringify(data, null, 2);
+        document.getElementById("log").innerText = JSON.stringify(data, null, 2);
       }
 
       // [보내기] Web -> Native: Login Request
