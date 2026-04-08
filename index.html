@@ -38,7 +38,7 @@
     </style>
   </head>
   <body>
-    <title>React Native WebView Bridge Test</title>
+    <h2>React Native WebView Bridge Test #001</h2>
     <div class="card">
       <h3>1. Web -> Native 요청</h3>
       <button onclick="requestLogin()">로그인 요청 전송</button>
@@ -57,9 +57,10 @@
       // [보내기] Web -> Native: Login Request
       function requestLogin() {
         const request = {
+          cmd: "request",
           id: "123456",
           class: "Auth",
-          type: "Login",
+          method: "Login",
           parameter: {
             email: "kim@example.com",
             password: "112233",
@@ -73,20 +74,32 @@
         const data = e.detail;
         log(data);
 
-        if (data.class === "Popup" && data.type === "Confirm") {
-          const userConfirmed = confirm(
-            `${data.parameter.title}\n\n${data.parameter.message}`,
-          );
+        if (data.cmd === "request") {
+          if (data.class === "Popup") {
+            if (data.method === "Confirm") {
+              const isOk = confirm(
+                `${data.parameter.title}\n\n${data.parameter.message}`,
+              );
 
-          // 결과 응답 보내기 (Web -> Native)
-          const response = {
-            id: data.id,
-            class: "Popup",
-            type: "Confirm",
-            result: userConfirmed ? "Success" : "Fail",
-          };
-
-          window.ReactNativeWebView.postMessage(JSON.stringify(response));
+              // 응답(Response) 전송
+              const response = {
+                cmd: "response", // 응답임을 명시
+                id: data.id,
+                class: "Popup",
+                type: "Confirm",
+                result: userConfirmed ? "Success" : "Fail",
+              };
+              window.ReactNativeWebView.postMessage(JSON.stringify(response));
+            }
+          }
+        } else if (data.cmd === "response") {
+          if (data.class === "Auth") {
+            if (data.method === "Login") {
+              // Native -> Web 응답 처리 (예: 로그인 결과 보여주기)
+              console.log("로그인 결과 수신:", data.parameter);
+              alert(`${data.parameter.userName}님 환영합니다.`);
+            }
+          }
         }
       });
 
