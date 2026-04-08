@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>React Native WebView Bridge Test</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 20px;
+        line-height: 1.6;
+      }
+      .card {
+        border: 1px solid #ccc;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        background-color: #fafafa;
+      }
+      button {
+        width: 100%;
+        padding: 12px;
+        background-color: #007aff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+      pre {
+        background: #333;
+        color: #fff;
+        padding: 10px;
+        border-radius: 5px;
+        font-size: 12px;
+        overflow-x: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <title>React Native WebView Bridge Test</title>
+    <div class="card">
+      <h3>1. Web -> Native 요청</h3>
+      <button onclick="requestLogin()">로그인 요청 전송</button>
+    </div>
+    <div id="log-area" class="card">
+      <h3>로그 결과</h3>
+      <pre id="log">수신된 데이터가 여기에 표시됩니다.</pre>
+    </div>
+
+    <script>
+      // 로그 출력 함수
+      function log(data) {
+        document.getElementById("id").innerText = JSON.stringify(data, null, 2);
+      }
+
+      // [보내기] Web -> Native: Login Request
+      function requestLogin() {
+        const request = {
+          id: "123456",
+          class: "Auth",
+          type: "Login",
+          parameter: {
+            email: "kim@example.com",
+            password: "112233",
+          },
+        };
+        window.ReactNativeWebView.postMessage(JSON.stringify(request));
+      }
+
+      // [받기] Native -> Web: Request 또는 Response 수신
+      window.addEventListener("nativeMessage", function (e) {
+        const data = e.detail;
+        log(data);
+
+        if (data.class === "Popup" && data.type === "Confirm") {
+          const userConfirmed = confirm(
+            `${data.parameter.title}\n\n${data.parameter.message}`,
+          );
+
+          // 결과 응답 보내기 (Web -> Native)
+          const response = {
+            id: data.id,
+            class: "Popup",
+            type: "Confirm",
+            result: userConfirmed ? "Success" : "Fail",
+          };
+
+          window.ReactNativeWebView.postMessage(JSON.stringify(response));
+        }
+      });
+
+      // 1. App(Native)으로 메시지 보내기
+      function sendToNative() {
+        const data = {
+          type: "GREETING",
+          payload: "안녕하세요! 웹에서 보낸 메시지입니다.",
+        };
+      }
+    </script>
+  </body>
+</html>
